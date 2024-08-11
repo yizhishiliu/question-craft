@@ -4,6 +4,7 @@ import GlobalFooter from "../../components/GlobalFooter";
 import questions from "../../data/questions.json";
 import "./index.scss";
 import { useEffect, useState } from "react";
+import Taro from "@tarojs/taro";
 
 /**
  * 做题页面
@@ -60,7 +61,9 @@ export default () => {
           className="controlBtn"
           disabled={!currentAnswer}
           onClick={() => {
-            // TODO: 跳转到结果页面
+            Taro.navigateTo({
+              url: "/pages/result/index",
+            });
           }}
         >
           查看结果
