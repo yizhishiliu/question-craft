@@ -1,5 +1,5 @@
 import { View } from "@tarojs/components";
-import { AtButton, AtRadio } from "taro-ui";
+import {AtButton, AtProgress, AtRadio} from "taro-ui";
 import { useEffect, useState } from "react";
 import Taro from "@tarojs/taro";
 import GlobalFooter from "../../components/GlobalFooter";
@@ -84,6 +84,15 @@ export default () => {
           上一题
         </AtButton>
       )}
+      <AtProgress
+        className="progress"
+        // 进度条的百分比
+        percent={(answerList.length / questions.length) * 100}
+        // 进度条的宽度
+        strokeWidth={10}
+        // 进度条的颜色
+        activeColor="#1aad19"
+      />
       <GlobalFooter />
     </View>
   );
