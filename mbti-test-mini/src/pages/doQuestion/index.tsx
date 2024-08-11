@@ -1,10 +1,10 @@
 import { View } from "@tarojs/components";
 import { AtButton, AtRadio } from "taro-ui";
+import { useEffect, useState } from "react";
+import Taro from "@tarojs/taro";
 import GlobalFooter from "../../components/GlobalFooter";
 import questions from "../../data/questions.json";
 import "./index.scss";
-import { useEffect, useState } from "react";
-import Taro from "@tarojs/taro";
 
 /**
  * 做题页面
@@ -61,6 +61,12 @@ export default () => {
           className="controlBtn"
           disabled={!currentAnswer}
           onClick={() => {
+            // 传递答案列表
+            Taro.setStorage({
+              key:"answerList",
+              data:answerList
+            });
+            // 跳转结果页面
             Taro.navigateTo({
               url: "/pages/result/index",
             });

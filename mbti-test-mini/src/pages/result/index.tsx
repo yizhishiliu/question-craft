@@ -1,16 +1,28 @@
 import { View, Image } from "@tarojs/components";
 import { AtButton } from "taro-ui";
+import Taro from "@tarojs/taro";
 import headerBg from "../../assets/headerBg.png";
 import "./index.scss";
 import questionResults from "../../data/question_results.json";
+import questions from "../../data/questions.json";
 import GlobalFooter from "../../components/GlobalFooter";
-import Taro from "@tarojs/taro";
+import {getBestQuestionResult} from "../../utis/bitUtils";
 
 /**
  * 测试结果页面
  */
 export default () => {
-  const result = questionResults[0];
+  // 获取从答题页面传递过来的答案列表
+  const answerList = Taro.getStorageSync("answerList");
+  if (!answerList || answerList.length < 0) {
+    Taro.showToast({
+      title: "答案为空！",
+      icon: "error",
+      duration: 2000
+    });
+  }
+  // 根据答案列表获取对应的测试结果
+  const result = getBestQuestionResult(answerList, questions, questionResults);
 
   return (
     <View className="resultPage">
