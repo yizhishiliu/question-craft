@@ -1,7 +1,7 @@
 package com.shiliu.questioncraft.service;
 
-import com.shiliu.questioncraft.model.entity.PostThumb;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.shiliu.questioncraft.model.entity.PostThumb;
 import com.shiliu.questioncraft.model.entity.User;
 
 /**
