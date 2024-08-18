@@ -59,12 +59,9 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
 
         // 创建数据时，参数不能为空
         if (add) {
-            // todo 补充校验规则
+            // 补充校验规则
             ThrowUtils.throwIf(StringUtils.isBlank(appName), ErrorCode.PARAMS_ERROR, "应用名称不能为空");
             ThrowUtils.throwIf(StringUtils.isBlank(appDesc), ErrorCode.PARAMS_ERROR, "应用描述不能为空");
-            // 审核状态枚举值校验
-            ReviewStatusEnum reviewStatusEnum = ReviewStatusEnum.getEnumByValue(reviewStatus);
-            ThrowUtils.throwIf(reviewStatusEnum == null, ErrorCode.PARAMS_ERROR, "审核状态不合法");
             // 应用类型枚举值校验
             AppTypeEnum appTypeEnum = AppTypeEnum.getEnumByValue(appType);
             ThrowUtils.throwIf(appType == null, ErrorCode.PARAMS_ERROR, "应用类型不合法");
@@ -76,10 +73,14 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
         // 修改数据时，有参数则校验
         // 补充校验规则
         if (StringUtils.isNotBlank(appName)) {
-            ThrowUtils.throwIf(appName.length() < 80, ErrorCode.PARAMS_ERROR, "应用名称要小于80个字符");
+            ThrowUtils.throwIf(appName.length() > 80, ErrorCode.PARAMS_ERROR, "应用名称要小于80个字符");
         }
 
-
+        if (reviewStatus != null) {
+            // 审核状态枚举值校验
+            ReviewStatusEnum reviewStatusEnum = ReviewStatusEnum.getEnumByValue(reviewStatus);
+            ThrowUtils.throwIf(reviewStatusEnum == null, ErrorCode.PARAMS_ERROR, "审核状态不合法");
+        }
     }
 
     /**
