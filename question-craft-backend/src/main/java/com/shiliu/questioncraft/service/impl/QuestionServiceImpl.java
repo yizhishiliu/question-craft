@@ -9,12 +9,14 @@ import com.shiliu.questioncraft.constant.CommonConstant;
 import com.shiliu.questioncraft.exception.ThrowUtils;
 import com.shiliu.questioncraft.mapper.QuestionMapper;
 import com.shiliu.questioncraft.model.dto.question.QuestionQueryRequest;
+import com.shiliu.questioncraft.model.entity.App;
 import com.shiliu.questioncraft.model.entity.Question;
 import com.shiliu.questioncraft.model.entity.QuestionFavour;
 import com.shiliu.questioncraft.model.entity.QuestionThumb;
 import com.shiliu.questioncraft.model.entity.User;
 import com.shiliu.questioncraft.model.vo.QuestionVO;
 import com.shiliu.questioncraft.model.vo.UserVO;
+import com.shiliu.questioncraft.service.AppService;
 import com.shiliu.questioncraft.service.QuestionService;
 import com.shiliu.questioncraft.service.UserService;
 import com.shiliu.questioncraft.utils.SqlUtils;
@@ -43,6 +45,9 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     @Resource
     private UserService userService;
 
+    @Resource
+    private AppService appService;
+
     /**
      * 校验数据
      *
@@ -52,17 +57,20 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
     @Override
     public void validQuestion(Question question, boolean add) {
         ThrowUtils.throwIf(question == null, ErrorCode.PARAMS_ERROR);
-        // todo 从对象中取值
-        String title = question.getTitle();
+        // 从对象中取值
+        String questionContent = question.getQuestionContent();
+        Long appId = question.getAppId();
         // 创建数据时，参数不能为空
         if (add) {
-            // todo 补充校验规则
-            ThrowUtils.throwIf(StringUtils.isBlank(title), ErrorCode.PARAMS_ERROR);
+            // 补充校验规则
+            ThrowUtils.throwIf(StringUtils.isBlank(questionContent), ErrorCode.PARAMS_ERROR, "问题内容不能为空");
+            ThrowUtils.throwIf(appId == null || appId < 0, ErrorCode.PARAMS_ERROR, "appId不合法");
         }
         // 修改数据时，有参数则校验
-        // todo 补充校验规则
-        if (StringUtils.isNotBlank(title)) {
-            ThrowUtils.throwIf(title.length() > 80, ErrorCode.PARAMS_ERROR, "标题过长");
+        // 补充校验规则
+        if (appId != null) {
+            App app = appService.getById(appId);
+            ThrowUtils.throwIf(app == null, ErrorCode.PARAMS_ERROR, "app不存在");
         }
     }
 
