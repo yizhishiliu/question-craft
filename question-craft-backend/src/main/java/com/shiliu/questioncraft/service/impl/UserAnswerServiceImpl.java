@@ -12,8 +12,6 @@ import com.shiliu.questioncraft.model.dto.userAnswer.UserAnswerQueryRequest;
 import com.shiliu.questioncraft.model.entity.App;
 import com.shiliu.questioncraft.model.entity.User;
 import com.shiliu.questioncraft.model.entity.UserAnswer;
-import com.shiliu.questioncraft.model.entity.UserAnswerFavour;
-import com.shiliu.questioncraft.model.entity.UserAnswerThumb;
 import com.shiliu.questioncraft.model.vo.UserAnswerVO;
 import com.shiliu.questioncraft.model.vo.UserVO;
 import com.shiliu.questioncraft.service.AppService;
