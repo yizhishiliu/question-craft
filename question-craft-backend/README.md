@@ -1,5 +1,6 @@
 # SpringBoot 项目初始模板
-# @author <a href="https://github.com/yizhishiliu">一之十六</a>
+
+## @author <a href="https://github.com/yizhishiliu">一之十六</a>
 
 基于 Java SpringBoot 的项目初始模板，整合了常用框架和主流业务的示例代码。
 
@@ -82,7 +83,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/my_db
+    url: jdbc:mysql://localhost:3306/question_craft
     username: root
     password: 123456
 ```
