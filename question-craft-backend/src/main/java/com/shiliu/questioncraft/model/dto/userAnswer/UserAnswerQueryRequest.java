@@ -1,22 +1,26 @@
-package com.shiliu.questioncraft.model.entity;
+package com.shiliu.questioncraft.model.dto.userAnswer;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.shiliu.questioncraft.common.PageRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.List;
 
 /**
- * 用户答题记录
- * @TableName user_answer
+ * 查询用户答案请求
+ *
+ * @author <a href="https://github.com/yizhishiliu">一之十六</a>
  */
-@TableName(value ="user_answer")
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class UserAnswer implements Serializable {
+public class UserAnswerQueryRequest extends PageRequest implements Serializable {
+
     /**
      * id
      */
-    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -37,7 +41,7 @@ public class UserAnswer implements Serializable {
     /**
      * 用户答案（JSON 数组）
      */
-    private String choices;
+    private List<String> choices;
 
     /**
      * 评分结果 id
@@ -70,21 +74,14 @@ public class UserAnswer implements Serializable {
     private Long userId;
 
     /**
-     * 创建时间
+     * id
      */
-    private Date createTime;
+    private Long notId;
 
     /**
-     * 更新时间
+     * 搜索词
      */
-    private Date updateTime;
+    private String searchText;
 
-    /**
-     * 是否删除
-     */
-    @TableLogic
-    private Integer isDelete;
-
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }
