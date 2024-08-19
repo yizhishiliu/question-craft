@@ -8,12 +8,10 @@ import com.shiliu.questioncraft.model.entity.Question;
 import com.shiliu.questioncraft.model.entity.ScoringResult;
 import com.shiliu.questioncraft.model.entity.UserAnswer;
 import com.shiliu.questioncraft.model.vo.QuestionVO;
-import com.shiliu.questioncraft.service.AppService;
 import com.shiliu.questioncraft.service.QuestionService;
 import com.shiliu.questioncraft.service.ScoringResultService;
 
 import javax.annotation.Resource;
-import java.sql.Wrapper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

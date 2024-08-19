@@ -14,9 +14,9 @@ public interface ScoringStrategy {
 
     /**
      * 评分
-     * @param choices
-     * @param app
-     * @return
+     * @param choices 用户答案
+     * @param app 应用
+     * @return 题目答案（得分结果）
      * @throws Exception
      */
     UserAnswer doScore(List<String> choices, App app) throws Exception;;
