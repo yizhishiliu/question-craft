@@ -21,6 +21,7 @@ import java.util.Map;
  *
  * @author <a href="https://github.com/yizhishiliu">一之十六</a>
  */
+@ScoringStrategyConfig(appType = 1, scoringStrategy = 0)
 public class CustomTestScoringStrategy implements ScoringStrategy {
 
     @Resource

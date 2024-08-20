@@ -20,6 +20,7 @@ import java.util.Optional;
  *
  * @author <a href="https://github.com/yizhishiliu">一之十六</a>
  */
+@ScoringStrategyConfig(appType = 0, scoringStrategy = 0)
 public class CustomScoreScoringStrategy implements ScoringStrategy {
 
     @Resource
