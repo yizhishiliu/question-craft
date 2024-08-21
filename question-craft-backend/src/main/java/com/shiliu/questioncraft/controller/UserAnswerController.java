@@ -14,9 +14,12 @@ import com.shiliu.questioncraft.model.dto.userAnswer.UserAnswerAddRequest;
 import com.shiliu.questioncraft.model.dto.userAnswer.UserAnswerEditRequest;
 import com.shiliu.questioncraft.model.dto.userAnswer.UserAnswerQueryRequest;
 import com.shiliu.questioncraft.model.dto.userAnswer.UserAnswerUpdateRequest;
+import com.shiliu.questioncraft.model.entity.App;
 import com.shiliu.questioncraft.model.entity.UserAnswer;
 import com.shiliu.questioncraft.model.entity.User;
 import com.shiliu.questioncraft.model.vo.UserAnswerVO;
+import com.shiliu.questioncraft.scoring.ScoringStrategyExecutor;
+import com.shiliu.questioncraft.service.AppService;
 import com.shiliu.questioncraft.service.UserAnswerService;
 import com.shiliu.questioncraft.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +46,12 @@ public class UserAnswerController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private ScoringStrategyExecutor scoringStrategyExecutor;
+
+    @Resource
+    private AppService appService;
+
     // region 增删改查
 
     /**
@@ -62,6 +71,10 @@ public class UserAnswerController {
         userAnswer.setChoices(JSONUtil.toJsonStr(choices));
         // 数据校验
         userAnswerService.validUserAnswer(userAnswer, true);
+        // 判断 app 是否存在
+        Long appId = userAnswerAddRequest.getAppId();
+        App app = appService.getById(appId);
+        ThrowUtils.throwIf(app == null, ErrorCode.NOT_FOUND_ERROR);
         // 填充默认值
         User loginUser = userService.getLoginUser(request);
         userAnswer.setUserId(loginUser.getId());
@@ -70,6 +83,15 @@ public class UserAnswerController {
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         // 返回新写入的数据 id
         long newUserAnswerId = userAnswer.getId();
+        // 调用评分模块
+        try {
+            UserAnswer userAnswerResult = scoringStrategyExecutor.doScore(choices, app);
+            userAnswerResult.setId(newUserAnswerId);
+            userAnswerService.updateById(userAnswerResult);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "评分错误");
+        }
         return ResultUtils.success(newUserAnswerId);
     }
 
