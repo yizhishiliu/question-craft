@@ -267,6 +267,7 @@ public class AppController {
         App app = new App();
         app.setId(id);
         app.setReviewStatus(reviewStatus);
+        app.setReviewMessage(reviewRequest.getReviewMessage());
         app.setReviewerId(loginUser.getId());
         app.setReviewTime(new Date());
         boolean result = appService.updateById(app);
