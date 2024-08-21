@@ -17,6 +17,7 @@ import com.shiliu.questioncraft.model.dto.userAnswer.UserAnswerUpdateRequest;
 import com.shiliu.questioncraft.model.entity.App;
 import com.shiliu.questioncraft.model.entity.UserAnswer;
 import com.shiliu.questioncraft.model.entity.User;
+import com.shiliu.questioncraft.model.enums.ReviewStatusEnum;
 import com.shiliu.questioncraft.model.vo.UserAnswerVO;
 import com.shiliu.questioncraft.scoring.ScoringStrategyExecutor;
 import com.shiliu.questioncraft.service.AppService;
@@ -75,6 +76,10 @@ public class UserAnswerController {
         Long appId = userAnswerAddRequest.getAppId();
         App app = appService.getById(appId);
         ThrowUtils.throwIf(app == null, ErrorCode.NOT_FOUND_ERROR);
+        // 判断 app 是否已经审核通过（上架）
+        if (!ReviewStatusEnum.PASS.equals(ReviewStatusEnum.getEnumByValue(app.getReviewStatus()))) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "该应用尚未审核通过");
+        }
         // 填充默认值
         User loginUser = userService.getLoginUser(request);
         userAnswer.setUserId(loginUser.getId());
