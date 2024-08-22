@@ -24,6 +24,7 @@
               <div class="title">智编题海</div>
             </div>
           </a-menu-item>
+          <!-- 根据路由渲染菜单 -->
           <a-menu-item v-for="item in visibleMenu" :key="item.path">
             {{ item.name }}
           </a-menu-item>
@@ -58,6 +59,7 @@ const visibleMenu = routes.filter((item) => {
   return true;
 });
 
+// 路由跳转事件
 const doMenuClick = (key: string) => {
   // 点击菜单跳转到对应页面
   router.push({
