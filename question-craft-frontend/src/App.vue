@@ -12,6 +12,7 @@
 import BasicLayout from "@/layouts/BasicLayout.vue";
 import { useRoute } from "vue-router";
 
+// useRoute获取当前页面信息
 const route = useRoute();
 </script>
 <style scoped>
