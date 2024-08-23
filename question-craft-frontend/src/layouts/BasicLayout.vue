@@ -8,7 +8,9 @@
         <router-view />
       </a-layout-content>
       <a-layout-footer class="footer">
-        <a href="https://github.com/yizhishiliu" target="_blank">by 一之十六</a>
+        <a href="https://github.com/yizhishiliu" target="_blank"
+          >智编题海 by 一之十六</a
+        >
       </a-layout-footer>
     </a-layout>
   </div>
