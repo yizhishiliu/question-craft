@@ -12,9 +12,13 @@
 import BasicLayout from "@/layouts/BasicLayout.vue";
 import { useRoute } from "vue-router";
 import { getLoginUserUsingGet } from "@/api/userController";
+import { useLoginUserStore } from "@/store/userStore";
 
 // useRoute获取当前页面信息
 const route = useRoute();
+
+const loginUserStore = useLoginUserStore();
+loginUserStore.fetchLoginUser();
 
 getLoginUserUsingGet().then((res) => {
   console.log(res);
