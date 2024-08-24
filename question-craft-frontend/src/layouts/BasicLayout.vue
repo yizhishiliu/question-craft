@@ -25,20 +25,20 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
 }
 
 #basicLayout .header {
-  box-shadow: #eee 1px 1px 5px;
   margin-bottom: 16px;
+  box-shadow: #eee 1px 1px 5px;
 }
 
 #basicLayout .content {
-  background: linear-gradient(to bottom, #fff, #f0f0f0);
-  padding: 20px;
   margin-bottom: 10px;
+  padding: 20px;
+  background: linear-gradient(to bottom, #fff, #f0f0f0);
 }
 
 .footer {
-  background-color: #fff;
-  text-align: center;
   margin-bottom: 10px;
+  text-align: center;
+  background-color: #fff;
 }
 
 a {

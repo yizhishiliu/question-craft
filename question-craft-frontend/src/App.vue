@@ -11,9 +11,14 @@
 <script setup lang="ts">
 import BasicLayout from "@/layouts/BasicLayout.vue";
 import { useRoute } from "vue-router";
+import { getLoginUserUsingGet } from "@/api/userController";
 
 // useRoute获取当前页面信息
 const route = useRoute();
+
+getLoginUserUsingGet().then((res) => {
+  console.log(res);
+});
 </script>
 <style scoped>
 #app {

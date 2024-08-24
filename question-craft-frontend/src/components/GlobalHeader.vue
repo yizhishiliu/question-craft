@@ -73,13 +73,13 @@ const doMenuClick = (key: string) => {
 
 .titleBar {
   display: flex;
-  align-items: center; /* 垂直居中 */
+  align-items: center;
 }
 
 .title {
-  font-weight: bold; /* 加粗 */
-  color: black;
   margin-left: 10px;
+  color: black;
+  font-weight: bold;
 }
 
 .logo {
