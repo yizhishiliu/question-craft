@@ -21,6 +21,7 @@ export const useLoginUserStore = defineStore("loginUser", () => {
     } else {
       setTimeout(() => {
         loginUser.value = {
+          id: 1,
           userName: "AAA",
         };
       }, 3000);
