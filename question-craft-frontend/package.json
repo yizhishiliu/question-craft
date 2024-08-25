@@ -9,6 +9,9 @@
     "openapi": "node openapi.config.ts"
   },
   "dependencies": {
+    "@bytemd/plugin-gfm": "^1.21.0",
+    "@bytemd/plugin-highlight": "^1.21.0",
+    "@bytemd/vue-next": "^1.21.0",
     "@umijs/plugin-openapi": "^1.3.3",
     "axios": "^1.7.5",
     "core-js": "^3.8.3",
