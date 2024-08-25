@@ -45,8 +45,9 @@
 <script setup lang="ts">
 import { routes } from "@/router/routes";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useLoginUserStore } from "@/store/userStore";
+import checkAccess from "@/access/checkAccess";
 
 const loginUserStore = useLoginUserStore();
 
@@ -60,11 +61,14 @@ router.afterEach((to) => {
 });
 
 // 可见菜单
-const visibleMenu = routes.filter((item) => {
-  if (item.meta?.HideInMenu) {
-    return false;
-  }
-  return true;
+const visibleMenu = computed(() => {
+  return routes.filter((item) => {
+    if (item.meta?.HideInMenu) {
+      return false;
+    }
+    // 根据权限过滤菜单
+    return checkAccess(loginUserStore.loginUser, item.meta?.access as string);
+  });
 });
 
 // 路由跳转事件
