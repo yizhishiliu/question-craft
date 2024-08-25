@@ -31,7 +31,7 @@ router.beforeEach(async (to, from, next) => {
     }
 
     // 如果当前用户已登录，则判断权限是否足够，不足则跳转无权限页面
-    if (checkAccess(loginUser, needAccess as string)) {
+    if (!checkAccess(loginUser, needAccess as string)) {
       next("/noAuth");
       return;
     }

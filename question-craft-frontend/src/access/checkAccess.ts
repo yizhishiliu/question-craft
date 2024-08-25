@@ -21,14 +21,19 @@ const checkAccess = (
   // 需要登录
   if (needAccess === ACCESS_ENUM.USER) {
     // 如果未登录，则无权限
-    return loginUserAccess !== ACCESS_ENUM.NOT_LOGIN;
+    if (loginUserAccess === ACCESS_ENUM.NOT_LOGIN) {
+      return false;
+    }
   }
 
   // 需要管理员权限
   if (needAccess === ACCESS_ENUM.ADMIN) {
     // 如果不是管理员，则无权限
-    return loginUserAccess === ACCESS_ENUM.ADMIN;
+    if (loginUserAccess !== ACCESS_ENUM.ADMIN) {
+      return false;
+    }
   }
+  return true;
 };
 
 export default checkAccess;

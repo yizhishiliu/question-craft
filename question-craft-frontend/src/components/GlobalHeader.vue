@@ -67,7 +67,10 @@ const visibleMenu = computed(() => {
       return false;
     }
     // 根据权限过滤菜单
-    return checkAccess(loginUserStore.loginUser, item.meta?.access as string);
+    if (!checkAccess(loginUserStore.loginUser, item.meta?.access as string)) {
+      return false;
+    }
+    return true;
   });
 });
 
