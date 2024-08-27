@@ -1,5 +1,31 @@
 <template>
   <div id="adminUserPage">
+    <a-form
+      :model="formSearchParams"
+      :style="{ marginBottom: '20px' }"
+      layout="inline"
+      @submit="doSearch"
+    >
+      <a-form-item field="userName" label="用户名">
+        <a-input
+          allow-clear
+          v-model="formSearchParams.userName"
+          placeholder="请输入用户名"
+        />
+      </a-form-item>
+      <a-form-item field="userProfile" label="用户简介">
+        <a-input
+          allow-clear
+          v-model="formSearchParams.userProfile"
+          placeholder="请输入用户简介"
+        />
+      </a-form-item>
+      <a-form-item>
+        <a-button type="primary" html-type="submit" style="width: 100px">
+          搜索
+        </a-button>
+      </a-form-item>
+    </a-form>
     <a-table
       :columns="columns"
       :data="dataList"
@@ -31,9 +57,16 @@ import {
 import API from "@/api";
 import message from "@arco-design/web-vue/es/message";
 
-const searchParams = ref<API.UserQueryRequest>({
+const formSearchParams = ref<API.UserQueryRequest>({});
+
+// 初始化搜索条件（不应该被修改）
+const initSearchParams = {
   current: 1,
   pageSize: 10,
+};
+
+const searchParams = ref<API.UserQueryRequest>({
+  ...initSearchParams,
 });
 
 const dataList = ref<API.User[]>([]);
@@ -70,6 +103,20 @@ watchEffect(() => {
   loadData();
 });
 
+/**
+ * 搜索
+ */
+const doSearch = () => {
+  searchParams.value = {
+    ...initSearchParams,
+    ...formSearchParams.value,
+  };
+};
+
+/**
+ * 删除
+ * @param record
+ */
 const doDelete = async (record: API.User) => {
   if (!record.id) {
     return;
