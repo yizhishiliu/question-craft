@@ -37,6 +37,12 @@
       }"
       @page-change="onPageChange"
     >
+      <template #createTime="{ record }">
+        {{ dayjs(record.createTime).format("YYYY-MM-DD HH:mm:ss") }}
+      </template>
+      <template #updateTime="{ record }">
+        {{ dayjs(record.updateTime).format("YYYY-MM-DD HH:mm:ss") }}
+      </template>
       <template #userAvatar="{ record }">
         <a-image width="64" :src="record.userAvatar" />
       </template>
@@ -56,6 +62,7 @@ import {
 } from "@/api/userController";
 import API from "@/api";
 import message from "@arco-design/web-vue/es/message";
+import dayjs from "dayjs";
 
 const formSearchParams = ref<API.UserQueryRequest>({});
 
@@ -161,10 +168,12 @@ const columns = [
   {
     title: "创建时间",
     dataIndex: "createTime",
+    slotName: "createTime",
   },
   {
     title: "更新时间",
     dataIndex: "updateTime",
+    slotName: "updateTime",
   },
   {
     title: "操作",
