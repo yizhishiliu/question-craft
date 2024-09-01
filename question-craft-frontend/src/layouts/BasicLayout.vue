@@ -30,7 +30,10 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
 }
 
 #basicLayout .content {
-  margin-bottom: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 10px;
   padding: 20px;
   background: linear-gradient(to bottom, #fff, #f0f0f0);
 }
