@@ -10,12 +10,22 @@ import AdminAppPage from "@/views/admin/AdminAppPage.vue";
 import AdminQuestionPage from "@/views/admin/AdminQuestionPage.vue";
 import AdminScoringResultPage from "@/views/admin/AdminScoringResultPage.vue";
 import AdminUserAnswerPage from "@/views/admin/AdminUserAnswerPage.vue";
+import AppDetailPage from "@/views/app/AppDetailPage.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "主页",
     component: HomePage,
+  },
+  {
+    path: "/app/detail/:id",
+    name: "应用详情页",
+    props: true,
+    component: AppDetailPage,
+    meta: {
+      HideInMenu: true,
+    },
   },
   {
     path: "/noAuth",
