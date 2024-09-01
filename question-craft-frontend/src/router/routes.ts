@@ -11,6 +11,9 @@ import AdminQuestionPage from "@/views/admin/AdminQuestionPage.vue";
 import AdminScoringResultPage from "@/views/admin/AdminScoringResultPage.vue";
 import AdminUserAnswerPage from "@/views/admin/AdminUserAnswerPage.vue";
 import AppDetailPage from "@/views/app/AppDetailPage.vue";
+import AddAppPage from "@/views/add/AddAppPage.vue";
+import AddQuestionPage from "@/views/add/AddQuestionPage.vue";
+import AddScoringResultPage from "@/views/add/AddScoringResultPage.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -23,6 +26,30 @@ export const routes: Array<RouteRecordRaw> = [
     name: "应用详情页",
     props: true,
     component: AppDetailPage,
+    meta: {
+      HideInMenu: true,
+    },
+  },
+  {
+    path: "/add/app",
+    name: "创建应用",
+    props: true,
+    component: AddAppPage,
+  },
+  {
+    path: "/add/question/:appId",
+    name: "创建题目",
+    props: true,
+    component: AddQuestionPage,
+    meta: {
+      HideInMenu: true,
+    },
+  },
+  {
+    path: "/add/scoring_result/:appId",
+    name: "创建评分",
+    props: true,
+    component: AddScoringResultPage,
     meta: {
       HideInMenu: true,
     },
