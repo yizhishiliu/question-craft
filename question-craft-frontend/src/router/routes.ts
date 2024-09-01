@@ -30,6 +30,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/admin/app",
+    name: "应用管理",
+    component: AdminAppPage,
+    meta: {
+      access: ACCESS_ENUM.ADMIN,
+    },
+  },
+  {
     path: "/hide",
     name: "隐藏页面",
     component: HomeView,
