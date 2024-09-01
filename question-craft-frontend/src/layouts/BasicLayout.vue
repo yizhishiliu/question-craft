@@ -35,7 +35,7 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
   max-width: 1200px;
   margin: 0 auto 10px;
   padding: 20px;
-  background: linear-gradient(to bottom, #fff, #f0f0f0);
+  //background: linear-gradient(to bottom, #fff, #f5f5f5);
 }
 
 .footer {
