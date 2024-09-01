@@ -6,6 +6,7 @@ import NoAuthPage from "@/views/NoAuthPage.vue";
 import UserRegisterPage from "@/views/user/UserRegisterPage.vue";
 import UserLoginPage from "@/views/user/UserLoginPage.vue";
 import AdminUserPage from "@/views/admin/AdminUserPage.vue";
+import AdminAppPage from "@/views/admin/AdminAppPage.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
