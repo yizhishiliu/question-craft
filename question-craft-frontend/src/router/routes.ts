@@ -14,7 +14,7 @@ import AdminUserAnswerPage from "@/views/admin/AdminUserAnswerPage.vue";
 export const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "home",
+    name: "主页",
     component: HomePage,
   },
   {
