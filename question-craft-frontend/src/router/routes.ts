@@ -37,6 +37,12 @@ export const routes: Array<RouteRecordRaw> = [
     component: AddAppPage,
   },
   {
+    path: "/add/app/:id",
+    name: "修改应用",
+    props: true,
+    component: AddAppPage,
+  },
+  {
     path: "/add/question/:appId",
     name: "创建题目",
     props: true,
