@@ -92,12 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  addAppUsingPost,
-  editAppUsingPost,
-  getAppVoByIdUsingGet,
-} from "@/api/appController";
-import { ref, withDefaults, defineProps, watchEffect, reactive } from "vue";
+import { ref, withDefaults, defineProps, watchEffect } from "vue";
 import API from "@/api";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
