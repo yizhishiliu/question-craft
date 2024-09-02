@@ -30,7 +30,7 @@
                 >删除题目
               </a-button>
             </a-space>
-            <a-form-item field="posts.post1" :label="`题目 ${index + 1} 标题`">
+            <a-form-item :label="`题目 ${index + 1} 标题`">
               <a-input v-model="question.title" placeholder="请输入标题" />
             </a-form-item>
             <!-- 题目选项 start -->
@@ -49,16 +49,16 @@
               :content-flex="false"
               :merge-props="false"
             >
-              <a-form-item field="posts.post1" label="选项key">
+              <a-form-item label="选项key">
                 <a-input v-model="option.key" placeholder="请输入选项key" />
               </a-form-item>
-              <a-form-item field="posts.post1" label="选项value">
+              <a-form-item label="选项value">
                 <a-input v-model="option.value" placeholder="请输入选项值" />
               </a-form-item>
-              <a-form-item field="posts.post1" label="选项结果">
+              <a-form-item label="选项结果">
                 <a-input v-model="option.result" placeholder="请输入选项结果" />
               </a-form-item>
-              <a-form-item field="posts.post1" label="选项得分">
+              <a-form-item label="选项得分">
                 <a-input-number
                   v-model="option.score"
                   label="请输入选项得分"
