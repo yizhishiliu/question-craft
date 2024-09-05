@@ -14,6 +14,9 @@ import AppDetailPage from "@/views/app/AppDetailPage.vue";
 import AddAppPage from "@/views/add/AddAppPage.vue";
 import AddQuestionPage from "@/views/add/AddQuestionPage.vue";
 import AddScoringResultPage from "@/views/add/AddScoringResultPage.vue";
+import DoAnswerPage from "@/views/answer/DoAnswerPage.vue";
+import AnswerResultPage from "@/views/answer/AnswerResultPage.vue";
+import MyAnswerPage from "@/views/answer/MyAnswerPage.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -58,6 +61,35 @@ export const routes: Array<RouteRecordRaw> = [
     component: AddScoringResultPage,
     meta: {
       HideInMenu: true,
+    },
+  },
+  {
+    path: "/answer/do/:appId",
+    name: "答题",
+    props: true,
+    component: DoAnswerPage,
+    meta: {
+      HideInMenu: true,
+      access: ACCESS_ENUM.USER,
+    },
+  },
+  {
+    path: "/answer/result/:id",
+    name: "答题结果",
+    props: true,
+    component: AnswerResultPage,
+    meta: {
+      HideInMenu: true,
+      access: ACCESS_ENUM.USER,
+    },
+  },
+  {
+    path: "/answer/my",
+    name: "我的答题",
+    props: true,
+    component: MyAnswerPage,
+    meta: {
+      access: ACCESS_ENUM.USER,
     },
   },
   {
