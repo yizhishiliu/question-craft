@@ -3,8 +3,8 @@
     <a-card>
       <h1>{{ app.appName }}</h1>
       <p>{{ app.appDesc }}</p>
-      <h2 style="margin-bottom: 32px">
-        {{ current }}.{{ currentQuestion.title }}
+      <h2 style="margin-bottom: 16px">
+        {{ currentQuestion?.title }}
       </h2>
       <div>
         <a-radio-group
@@ -14,7 +14,7 @@
           @change="doRadioChange"
         />
       </div>
-      <div>
+      <div style="margin-top: 24px">
         <a-space>
           <a-button
             type="primary"
@@ -36,7 +36,6 @@
         </a-space>
       </div>
     </a-card>
-    {{ questionContent }}
   </div>
 </template>
 
@@ -122,7 +121,7 @@ const loadData = async () => {
     sortOrder: "descend",
   });
   if (res.data.code === 0 && res.data.data?.records) {
-    questionContent.value = res.data.data?.records[0].questionContent;
+    questionContent.value = res.data.data.records[0].questionContent;
   } else {
     message.error("获取题目失败，" + res.data.message);
   }
@@ -163,5 +162,3 @@ const doSubmit = async () => {
   }
 };
 </script>
-
-<style scoped></style>
