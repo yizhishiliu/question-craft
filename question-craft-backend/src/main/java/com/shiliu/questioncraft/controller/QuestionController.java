@@ -305,7 +305,7 @@ public class QuestionController {
         String userMessage = getGenerateQuestionUserMessage(app, questionNumber, optionNumber);
 
         // 调用 AI 生成题目
-        String jsonResult = aiManager.doSyncUnStableRequest(GENERTE_QUESTION_SYSTEM_MESSAGE, userMessage);
+        String jsonResult = aiManager.doSyncStableRequest(GENERTE_QUESTION_SYSTEM_MESSAGE, userMessage);
 
         // 解析结果
         int startIndex = jsonResult.indexOf("[");
