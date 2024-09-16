@@ -96,7 +96,7 @@ public class AiManager {
      * @param userMessage   用户消息
      * @return 返回结果
      */
-    public String doSyncUnStableRequest(String systemMessage, String userMessage) {
+    public String doSyncStableRequest(String systemMessage, String userMessage) {
         return doRequest(systemMessage, userMessage, Boolean.FALSE, STABLE_TEMPERATURE);
     }
 
@@ -107,7 +107,7 @@ public class AiManager {
      * @param userMessage   用户消息
      * @return 返回结果
      */
-    public String doSyncStableRequest(String systemMessage, String userMessage) {
+    public String doSyncUnStableRequest(String systemMessage, String userMessage) {
         return doRequest(systemMessage, userMessage, Boolean.FALSE, UNSTABLE_TEMPERATURE);
     }
 }
