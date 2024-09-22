@@ -349,11 +349,16 @@ public class QuestionController {
         AtomicInteger leftBracketCounter = new AtomicInteger();
         // 拼接完整题目内容
         StringBuilder questionContent = new StringBuilder();
+        // 将dataFlowable在io线程中观察
         dataFlowable
                 .observeOn(Schedulers.io())
+                // 获取智谱AI返回的内容
                 .map(modelData -> modelData.getChoices().get(0).getDelta().getContent())
+                // 去除所有空白字符（包括空格、制表符和换行符）
                 .map(content -> content.replace("\\s", ""))
+                // 过滤掉空字符
                 .filter(StrUtil::isNotBlank)
+                // 将content转换为字符数组，将其放入characterList中，最后返回一个Flowable（字符流）
                 .flatMap(content -> {
                     List<Character> characterList = new ArrayList<>();
                     for (char c : content.toCharArray()) {
@@ -361,6 +366,7 @@ public class QuestionController {
                     }
                     return Flowable.fromIterable(characterList);
                 })
+                // 对每一个字符进行操作
                 .doOnNext(c -> {
                     // 如果是左括号'{'，计数器加一
                     if (c == '{') {
@@ -369,17 +375,22 @@ public class QuestionController {
                     if (leftBracketCounter.get() > 0) {
                         questionContent.append(c);
                     }
+                    // 如果是右括号'}',计数器减一
                     if (c == '}') {
                         leftBracketCounter.addAndGet(-1);
+                        // 如果计数器为0，发送questionContent的内容
                         if (leftBracketCounter.get() == 0) {
                             sseEmitter.send(JSONUtil.toJsonStr(questionContent.toString()));
-                            // 重置
+                            // 重置题目内容
                             questionContent.setLength(0);
                         }
                     }
                 })
+                // 发生错误时打印错误日志
                 .doOnError((e) -> log.error("AI 生成题目失败", e))
+                // 完成时调用complete方法
                 .doOnComplete(sseEmitter::complete)
+                // 订阅
                 .subscribe();
         return sseEmitter;
     }
