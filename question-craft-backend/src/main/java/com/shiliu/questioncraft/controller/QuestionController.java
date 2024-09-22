@@ -1,5 +1,6 @@
 package com.shiliu.questioncraft.controller;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.shiliu.questioncraft.annotation.AuthCheck;
@@ -20,13 +21,21 @@ import com.shiliu.questioncraft.model.vo.QuestionVO;
 import com.shiliu.questioncraft.service.AppService;
 import com.shiliu.questioncraft.service.QuestionService;
 import com.shiliu.questioncraft.service.UserService;
+import com.zhipu.oapi.service.v4.model.ModelData;
+import io.reactivex.Flowable;
+import io.reactivex.Scheduler;
+import io.reactivex.schedulers.Schedulers;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 题目接口
@@ -314,6 +323,65 @@ public class QuestionController {
         List<QuestionContentDTO> questionContentDTOList = JSONUtil.toList(result, QuestionContentDTO.class);
 
         return ResultUtils.success(questionContentDTOList);
+    }
+
+    @GetMapping("/ai_generate/sse")
+    public SseEmitter aiGenerateQuestionSSE(AiGenerateQuestionRequest aiGenerateQuestionRequest) {
+        ThrowUtils.throwIf(aiGenerateQuestionRequest == null, ErrorCode.PARAMS_ERROR);
+        // 获取参数
+        Long appId = aiGenerateQuestionRequest.getAppId();
+        int questionNumber = aiGenerateQuestionRequest.getQuestionNumber();
+        int optionNumber = aiGenerateQuestionRequest.getOptionNumber();
+
+        // 获取应用信息
+        App app = appService.getById(appId);
+        ThrowUtils.throwIf(app == null, ErrorCode.NOT_FOUND_ERROR);
+
+        // 封装prompt
+        String userMessage = getGenerateQuestionUserMessage(app, questionNumber, optionNumber);
+
+        // 建立 SSE 连接对象，0表示永不超时
+        SseEmitter sseEmitter = new SseEmitter(0L);
+
+        // 调用 AI，流式返回
+        Flowable<ModelData> dataFlowable = aiManager.doStreamRequest(GENERTE_QUESTION_SYSTEM_MESSAGE, userMessage, null);
+        // 左括号计数器，除默认值外，当左括号数量等于右括号数量时，也就是值为0时，可以截取
+        AtomicInteger leftBracketCounter = new AtomicInteger();
+        // 拼接完整题目内容
+        StringBuilder questionContent = new StringBuilder();
+        dataFlowable
+                .observeOn(Schedulers.io())
+                .map(modelData -> modelData.getChoices().get(0).getDelta().getContent())
+                .map(content -> content.replace("\\s", ""))
+                .filter(StrUtil::isNotBlank)
+                .flatMap(content -> {
+                    List<Character> characterList = new ArrayList<>();
+                    for (char c : content.toCharArray()) {
+                        characterList.add(c);
+                    }
+                    return Flowable.fromIterable(characterList);
+                })
+                .doOnNext(c -> {
+                    // 如果是左括号'{'，计数器加一
+                    if (c == '{') {
+                        leftBracketCounter.addAndGet(1);
+                    }
+                    if (leftBracketCounter.get() > 0) {
+                        questionContent.append(c);
+                    }
+                    if (c == '}') {
+                        leftBracketCounter.addAndGet(-1);
+                        if (leftBracketCounter.get() == 0) {
+                            sseEmitter.send(JSONUtil.toJsonStr(questionContent.toString()));
+                            // 重置
+                            questionContent.setLength(0);
+                        }
+                    }
+                })
+                .doOnError((e) -> log.error("AI 生成题目失败", e))
+                .doOnComplete(sseEmitter::complete)
+                .subscribe();
+        return sseEmitter;
     }
     // endregion
 }
