@@ -35,14 +35,23 @@
           />
         </a-form-item>
         <a-form-item>
-          <a-button
-            :loading="submitting"
-            type="primary"
-            html-type="submit"
-            style="width: 120px"
-          >
-            {{ submitting ? "生成中" : "一键生成" }}
-          </a-button>
+          <a-space>
+            <a-button
+              :loading="submitting"
+              type="primary"
+              html-type="submit"
+              style="width: 120px"
+            >
+              {{ submitting ? "生成中" : "一键生成" }}
+            </a-button>
+            <a-button
+              :loading="sseSubmitting"
+              style="width: 120px"
+              @click="handleSSESubmit"
+            >
+              {{ sseSubmitting ? "生成中" : "实时生成" }}
+            </a-button>
+          </a-space>
         </a-form-item>
       </a-form>
     </div>
@@ -58,6 +67,9 @@ import message from "@arco-design/web-vue/es/message";
 interface Props {
   appId: string;
   onSuccess?: (result: API.QuestionContentDTO[]) => void;
+  onSSESuccess?: (result: API.QuestionContentDTO) => void;
+  onSSEStart?: (event: any) => void;
+  onSSEClose?: (event: any) => void;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -73,6 +85,7 @@ const form = reactive({
 
 const visible = ref(false);
 const submitting = ref(false);
+const sseSubmitting = ref(false);
 
 const handleClick = () => {
   visible.value = true;
@@ -108,5 +121,55 @@ const handleSubmit = async () => {
     message.error("操作失败，" + res.data.message);
   }
   submitting.value = false;
+};
+
+/**
+ * 提交（实时生成）
+ */
+const handleSSESubmit = async () => {
+  if (!props.appId) {
+    return;
+  }
+  sseSubmitting.value = true;
+
+  // 创建SSE请求
+  const eventSource = new EventSource(
+    // 注意：完整的接口地址（axios默认不支持SSE）
+    `http://localhost:8101/api/question/ai_generate/sse` +
+      `?appId=${props.appId}&optionNumber=${form.optionNumber}&questionNumber=${form.questionNumber}`
+  );
+
+  let firstMessage = true;
+  // 接收消息
+  eventSource.onmessage = (event) => {
+    if (firstMessage) {
+      props.onSSEStart?.(event);
+      handleCancel();
+      firstMessage = false;
+    }
+    console.log("Received message:", event.data);
+    props.onSSESuccess?.(JSON.parse(event.data));
+  };
+
+  // 错误处理
+  eventSource.onerror = (event) => {
+    if (event.eventPhase === EventSource.CLOSED) {
+      console.log("SSE 连接关闭");
+      props.onSSEClose?.(event);
+      eventSource.close();
+    } else {
+      console.error("SSE error:", event);
+      eventSource.close();
+    }
+  };
+
+  // 连接建立
+  // eventSource.onopen = (event) => {
+  //   console.log("建立 SSE 连接");
+  //   props.onSSEStart?.(event);
+  //   handleCancel();
+  // };
+
+  sseSubmitting.value = false;
 };
 </script>
