@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "spring.redis")
 @Data
-public class RedissionConfig {
+public class RedissonConfig {
 
     /**
      * redis地址
