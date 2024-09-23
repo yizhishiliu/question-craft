@@ -1,7 +1,11 @@
 package com.shiliu.questioncraft.scoring;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.shiliu.questioncraft.manager.AiManager;
 import com.shiliu.questioncraft.model.dto.question.QuestionAnswerDTO;
 import com.shiliu.questioncraft.model.dto.question.QuestionContentDTO;
@@ -14,6 +18,7 @@ import com.shiliu.questioncraft.service.QuestionService;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * AI 测评类应用评分策略
@@ -28,6 +33,16 @@ public class AiTestScoringStrategy implements ScoringStrategy {
 
     @Resource
     private AiManager aiManager;
+
+    /**
+     * AI 评分结果本地缓存
+     */
+    private final Cache<String, String> answerCacheMap =
+            Caffeine.newBuilder()
+                    .initialCapacity(1024)
+                    // 过期时间 5 分钟
+                    .expireAfterAccess(5L, TimeUnit.MINUTES)
+                    .build();
 
     /**
      * AI 评分系统消息
@@ -74,6 +89,23 @@ public class AiTestScoringStrategy implements ScoringStrategy {
     public UserAnswer doScore(List<String> choices, App app) throws Exception {
         // 1. 根据 id 获取题目
         Long appId = app.getId();
+        String jsonStr = JSONUtil.toJsonStr(choices);
+
+        // 构建缓存key
+        String cacheKey = buildCacheKey(appId, jsonStr);
+        // 查找缓存
+        String cacheAnswer = answerCacheMap.getIfPresent(cacheKey);
+        // 如果缓存中有答案，直接返回
+        if (StrUtil.isNotBlank(cacheAnswer)) {
+            // 构造返回值，填充答案对应的属性，返回评分结果
+            UserAnswer userAnswer = JSONUtil.toBean(cacheAnswer, UserAnswer.class);
+            userAnswer.setAppId(appId);
+            userAnswer.setAppType(app.getAppType());
+            userAnswer.setScoringStrategy(app.getScoringStrategy());
+            userAnswer.setChoices(jsonStr);
+            return userAnswer;
+        }
+
         Question question = questionService.getOne(
                 Wrappers.lambdaQuery(Question.class).eq(Question::getAppId, appId)
         );
@@ -93,12 +125,25 @@ public class AiTestScoringStrategy implements ScoringStrategy {
         int endIndex = result.lastIndexOf("}") + 1;
         String jsonResult = result.substring(startIndex, endIndex);
 
+        // 缓存结果
+        answerCacheMap.put(cacheKey, jsonResult);
+
         // 3. 构造返回值，填充答案对应的属性，返回评分结果
         UserAnswer userAnswer = JSONUtil.toBean(jsonResult, UserAnswer.class);
         userAnswer.setAppId(appId);
         userAnswer.setAppType(app.getAppType());
         userAnswer.setScoringStrategy(app.getScoringStrategy());
-        userAnswer.setChoices(JSONUtil.toJsonStr(choices));
+        userAnswer.setChoices(jsonStr);
         return userAnswer;
+    }
+
+    /**
+     * 构建缓存key
+     * @param appId 应用id
+     * @param choices 用户选择的答案
+     * @return 缓存key
+     */
+    private String buildCacheKey(Long appId, String choices) {
+        return DigestUtil.md5Hex(appId + ":" + choices);
     }
 }
