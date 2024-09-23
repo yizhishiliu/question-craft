@@ -154,7 +154,8 @@ public class AiTestScoringStrategy implements ScoringStrategy {
 
             // 3. 构造返回值，填充答案对应的属性，返回评分结果
             UserAnswer userAnswer = JSONUtil.toBean(jsonResult, UserAnswer.class);
-            userAnswer.setAppId(appId);
+            // 评分完成后更新用户答案表时不用传递appId（分表所用的字段就是appId，再传入进行更新会报错）
+            userAnswer.setAppId(null);
             userAnswer.setAppType(app.getAppType());
             userAnswer.setScoringStrategy(app.getScoringStrategy());
             userAnswer.setChoices(jsonStr);
