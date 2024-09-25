@@ -1,5 +1,6 @@
 package com.shiliu.questioncraft.controller;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.shiliu.questioncraft.annotation.AuthCheck;
@@ -198,7 +199,7 @@ public class UserAnswerController {
      */
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<UserAnswerVO>> listUserAnswerVOByPage(@RequestBody UserAnswerQueryRequest userAnswerQueryRequest,
-                                                               HttpServletRequest request) {
+                                                                   HttpServletRequest request) {
         long current = userAnswerQueryRequest.getCurrent();
         long size = userAnswerQueryRequest.getPageSize();
         // 限制爬虫
@@ -219,7 +220,7 @@ public class UserAnswerController {
      */
     @PostMapping("/my/list/page/vo")
     public BaseResponse<Page<UserAnswerVO>> listMyUserAnswerVOByPage(@RequestBody UserAnswerQueryRequest userAnswerQueryRequest,
-                                                                 HttpServletRequest request) {
+                                                                     HttpServletRequest request) {
         ThrowUtils.throwIf(userAnswerQueryRequest == null, ErrorCode.PARAMS_ERROR);
         // 补充查询条件，只查询当前登录用户的数据
         User loginUser = userService.getLoginUser(request);
@@ -270,4 +271,14 @@ public class UserAnswerController {
     }
 
     // endregion
+
+    /**
+     * 雪花算法生成用户答案 ID
+     *
+     * @return id
+     */
+    @GetMapping("/generate/id")
+    public BaseResponse<Long> generateUserAnswerId() {
+        return ResultUtils.success(IdUtil.getSnowflakeNextId());
+    }
 }
