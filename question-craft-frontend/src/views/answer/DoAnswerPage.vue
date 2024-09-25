@@ -55,7 +55,10 @@ import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import { listQuestionVoByPageUsingPost } from "@/api/questionController";
 import { getAppVoByIdUsingGet } from "@/api/appController";
-import { addUserAnswerUsingPost } from "@/api/userAnswerController";
+import {
+  addUserAnswerUsingPost,
+  generateUserAnswerIdUsingGet,
+} from "@/api/userAnswerController";
 
 interface Props {
   appId: string;
@@ -70,6 +73,28 @@ const props = withDefaults(defineProps<Props>(), {
 const router = useRouter();
 
 const app = ref<API.AppVO>({});
+
+/**
+ * 唯一 id
+ */
+const id = ref<number>();
+
+/**
+ * 生成唯一 id
+ */
+const generateId = async () => {
+  const res = await generateUserAnswerIdUsingGet();
+  if (res.data.code === 0) {
+    id.value = res.data.data as any;
+  } else {
+    message.error("获取唯一 id 失败，" + res.data.message);
+  }
+};
+
+// 进入页面时生成唯一 id
+watchEffect(() => {
+  generateId();
+});
 
 // 是否正在提交
 const submitting = ref(false);
@@ -160,6 +185,7 @@ const doSubmit = async () => {
   const res = await addUserAnswerUsingPost({
     appId: props.appId as any,
     choices: answerList,
+    id: id.value as any,
   });
   if (res.data.code === 0 && res.data.data) {
     router.push(`/answer/result/${res.data.data}`);
