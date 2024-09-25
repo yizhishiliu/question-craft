@@ -9,32 +9,20 @@ import com.shiliu.questioncraft.common.ResultUtils;
 import com.shiliu.questioncraft.constant.UserConstant;
 import com.shiliu.questioncraft.exception.BusinessException;
 import com.shiliu.questioncraft.exception.ThrowUtils;
-import com.shiliu.questioncraft.model.dto.user.UserAddRequest;
-import com.shiliu.questioncraft.model.dto.user.UserLoginRequest;
-import com.shiliu.questioncraft.model.dto.user.UserQueryRequest;
-import com.shiliu.questioncraft.model.dto.user.UserRegisterRequest;
-import com.shiliu.questioncraft.model.dto.user.UserUpdateMyRequest;
-import com.shiliu.questioncraft.model.dto.user.UserUpdateRequest;
+import com.shiliu.questioncraft.model.dto.user.*;
 import com.shiliu.questioncraft.model.entity.User;
 import com.shiliu.questioncraft.model.vo.LoginUserVO;
 import com.shiliu.questioncraft.model.vo.UserVO;
 import com.shiliu.questioncraft.service.UserService;
-
-import java.util.List;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 import static com.shiliu.questioncraft.service.impl.UserServiceImpl.SALT;
 
