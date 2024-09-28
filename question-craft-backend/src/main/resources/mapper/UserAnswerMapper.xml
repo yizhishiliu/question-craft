@@ -32,10 +32,10 @@
 
     <!-- 应用答题数量统计 -->
     <select id="doAppAnswerCount" resultType="com.shiliu.questioncraft.model.dto.statistic.AppAnswerCountDTO">
-        select user_answer.appId, count(user_answer.userId) as answeCount
+        select appId, count(userId) as answerCount
         from user_answer
-        group by user_answer.appId
-        order by answer_count desc limit 10;
+        group by appId
+        order by answerCount desc limit 10;
     </select>
 
     <!-- 应用答题结果统计 -->
