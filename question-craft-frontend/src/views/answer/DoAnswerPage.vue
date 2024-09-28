@@ -32,7 +32,7 @@
             :loading="submitting"
             @click="doSubmit"
           >
-            {{ submitting ? "AI 评分中" : "查看结果" }}
+            {{ submitting ? "评分中" : "查看结果" }}
           </a-button>
           <a-button v-if="current > 1" @click="current -= 1">上一题</a-button>
         </a-space>
