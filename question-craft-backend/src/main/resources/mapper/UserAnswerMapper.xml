@@ -37,4 +37,14 @@
         group by user_answer.appId
         order by answer_count desc limit 10;
     </select>
+
+    <!-- 应用答题结果统计 -->
+    <select id="doAppAnswerResultCount"
+            resultType="com.shiliu.questioncraft.model.dto.statistic.AppAnswerResultCountDTO">
+        select resultName, count(resultName) as resultCount
+        from user_answer
+        where appId = #{appId}
+        group by resultName
+        order by resultCount desc;
+    </select>
 </mapper>
