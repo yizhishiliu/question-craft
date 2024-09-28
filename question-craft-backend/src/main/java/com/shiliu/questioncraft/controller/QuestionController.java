@@ -342,7 +342,8 @@ public class QuestionController {
         ThrowUtils.throwIf(app == null, ErrorCode.NOT_FOUND_ERROR);
 
         // 默认全局线程池
-        Scheduler scheduler = Schedulers.single();
+//        Scheduler scheduler = Schedulers.single();
+        Scheduler scheduler = Schedulers.io();
 
         // 检测当前用户是否为 VIP 用户
         User loginUser = userService.getLoginUser(request);
@@ -394,6 +395,90 @@ public class QuestionController {
                         leftBracketCounter.addAndGet(-1);
                         // 如果计数器为0，发送questionContent的内容
                         if (leftBracketCounter.get() == 0) {
+                            sseEmitter.send(JSONUtil.toJsonStr(questionContent.toString()));
+                            // 重置题目内容
+                            questionContent.setLength(0);
+                        }
+                    }
+                })
+                // 发生错误时打印错误日志
+                .doOnError((e) -> log.error("AI 生成题目失败", e))
+                // 完成时调用complete方法
+                .doOnComplete(sseEmitter::complete)
+                // 订阅
+                .subscribe();
+        return sseEmitter;
+    }
+
+    @GetMapping("/ai_generate/sse/test")
+    public SseEmitter aiGenerateQuestionSSE(AiGenerateQuestionRequest aiGenerateQuestionRequest, boolean isVip) {
+        ThrowUtils.throwIf(aiGenerateQuestionRequest == null, ErrorCode.PARAMS_ERROR);
+        // 获取参数
+        Long appId = aiGenerateQuestionRequest.getAppId();
+        int questionNumber = aiGenerateQuestionRequest.getQuestionNumber();
+        int optionNumber = aiGenerateQuestionRequest.getOptionNumber();
+
+        // 获取应用信息
+        App app = appService.getById(appId);
+        ThrowUtils.throwIf(app == null, ErrorCode.NOT_FOUND_ERROR);
+
+        // 默认全局线程池
+        Scheduler scheduler = Schedulers.single();
+
+        // 检测当前用户是否为 VIP 用户
+        if (isVip) {
+            scheduler = vipScheduler;
+        }
+
+        // 封装prompt
+        String userMessage = getGenerateQuestionUserMessage(app, questionNumber, optionNumber);
+
+        // 建立 SSE 连接对象，0表示永不超时
+        SseEmitter sseEmitter = new SseEmitter(0L);
+
+        // 调用 AI，流式返回
+        Flowable<ModelData> dataFlowable = aiManager.doStreamRequest(GENERTE_QUESTION_SYSTEM_MESSAGE, userMessage, null);
+        // 左括号计数器，除默认值外，当左括号数量等于右括号数量时，也就是值为0时，可以截取
+        AtomicInteger leftBracketCounter = new AtomicInteger();
+        // 拼接完整题目内容
+        StringBuilder questionContent = new StringBuilder();
+        // 订阅流
+        dataFlowable
+                .observeOn(scheduler)
+                // 获取智谱AI返回的内容
+                .map(modelData -> modelData.getChoices().get(0).getDelta().getContent())
+                // 去除所有空白字符（包括空格、制表符和换行符）
+                .map(content -> content.replace("\\s", ""))
+                // 过滤掉空字符
+                .filter(StrUtil::isNotBlank)
+                // 将content转换为字符数组，将其放入characterList中，最后返回一个Flowable（字符流）
+                .flatMap(content -> {
+                    List<Character> characterList = new ArrayList<>();
+                    for (char c : content.toCharArray()) {
+                        characterList.add(c);
+                    }
+                    return Flowable.fromIterable(characterList);
+                })
+                // 对每一个字符进行操作
+                .doOnNext(c -> {
+                    // 如果是左括号'{'，计数器加一
+                    if (c == '{') {
+                        leftBracketCounter.addAndGet(1);
+                    }
+                    if (leftBracketCounter.get() > 0) {
+                        questionContent.append(c);
+                    }
+                    // 如果是右括号'}',计数器减一
+                    if (c == '}') {
+                        leftBracketCounter.addAndGet(-1);
+                        // 如果计数器为0，发送questionContent的内容
+                        if (leftBracketCounter.get() == 0) {
+                            // 输出当前线程名称
+                            System.out.println(Thread.currentThread().getName());
+                            // 模拟普通用户阻塞
+                            if (!isVip) {
+                                Thread.sleep(10000L);
+                            }
                             sseEmitter.send(JSONUtil.toJsonStr(questionContent.toString()));
                             // 重置题目内容
                             questionContent.setLength(0);
