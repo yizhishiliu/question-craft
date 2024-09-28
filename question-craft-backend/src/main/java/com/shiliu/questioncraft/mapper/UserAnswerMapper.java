@@ -1,7 +1,11 @@
 package com.shiliu.questioncraft.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.shiliu.questioncraft.model.dto.statistic.AppAnswerCountDTO;
 import com.shiliu.questioncraft.model.entity.UserAnswer;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
 * @author ada
@@ -11,6 +15,11 @@ import com.shiliu.questioncraft.model.entity.UserAnswer;
 */
 public interface UserAnswerMapper extends BaseMapper<UserAnswer> {
 
+    /**
+     * 应用答题数量统计
+     * @return 用户答题统计列表
+     */
+    List<AppAnswerCountDTO> doAppAnswerCount();
 }
 
 
