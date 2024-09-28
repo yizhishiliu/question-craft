@@ -33,12 +33,27 @@ export async function aiGenerateQuestionUsingPost(
 }
 
 /** aiGenerateQuestionSSE GET /api/question/ai_generate/sse */
+export async function aiGenerateQuestionSseUsingGet1(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.aiGenerateQuestionSSEUsingGET1Params,
+  options?: { [key: string]: any },
+) {
+  return request<API.SseEmitter>('/api/question/ai_generate/sse', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
+/** aiGenerateQuestionSSE GET /api/question/ai_generate/sse/test */
 export async function aiGenerateQuestionSseUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.aiGenerateQuestionSSEUsingGETParams,
   options?: { [key: string]: any },
 ) {
-  return request<API.SseEmitter>('/api/question/ai_generate/sse', {
+  return request<API.SseEmitter>('/api/question/ai_generate/sse/test', {
     method: 'GET',
     params: {
       ...params,
