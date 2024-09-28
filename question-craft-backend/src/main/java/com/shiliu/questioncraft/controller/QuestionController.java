@@ -59,6 +59,10 @@ public class QuestionController {
     @Resource
     private AiManager aiManager;
 
+    // 注入 VIP 线程池
+    @Resource
+    private Scheduler vipScheduler;
+
     // region 增删改查
 
     /**
@@ -326,7 +330,7 @@ public class QuestionController {
     }
 
     @GetMapping("/ai_generate/sse")
-    public SseEmitter aiGenerateQuestionSSE(AiGenerateQuestionRequest aiGenerateQuestionRequest) {
+    public SseEmitter aiGenerateQuestionSSE(AiGenerateQuestionRequest aiGenerateQuestionRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(aiGenerateQuestionRequest == null, ErrorCode.PARAMS_ERROR);
         // 获取参数
         Long appId = aiGenerateQuestionRequest.getAppId();
@@ -336,6 +340,15 @@ public class QuestionController {
         // 获取应用信息
         App app = appService.getById(appId);
         ThrowUtils.throwIf(app == null, ErrorCode.NOT_FOUND_ERROR);
+
+        // 默认全局线程池
+        Scheduler scheduler = Schedulers.single();
+
+        // 检测当前用户是否为 VIP 用户
+        User loginUser = userService.getLoginUser(request);
+        if (loginUser != null && "vip".equals(loginUser.getUserRole())) {
+            scheduler = vipScheduler;
+        }
 
         // 封装prompt
         String userMessage = getGenerateQuestionUserMessage(app, questionNumber, optionNumber);
@@ -349,9 +362,10 @@ public class QuestionController {
         AtomicInteger leftBracketCounter = new AtomicInteger();
         // 拼接完整题目内容
         StringBuilder questionContent = new StringBuilder();
-        // 将dataFlowable在io线程中观察
+        // 订阅流
         dataFlowable
-                .observeOn(Schedulers.io())
+//                .observeOn(Schedulers.io())
+                .observeOn(scheduler)
                 // 获取智谱AI返回的内容
                 .map(modelData -> modelData.getChoices().get(0).getDelta().getContent())
                 // 去除所有空白字符（包括空格、制表符和换行符）
