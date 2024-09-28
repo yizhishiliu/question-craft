@@ -91,7 +91,6 @@ public class CustomTestScoringStrategy implements ScoringStrategy {
 
         // 4. 构造返回值，填充答案对应的属性，返回评分结果
         UserAnswer userAnswer = new UserAnswer();
-        userAnswer.setAppId(appId);
         userAnswer.setAppType(app.getAppType());
         userAnswer.setScoringStrategy(app.getScoringStrategy());
         userAnswer.setChoices(JSONUtil.toJsonStr(choices));
