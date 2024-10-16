@@ -1,14 +1,19 @@
 # question-craft（智编题海）
 
-#### 项目介绍
+### 项目介绍
 
 用户可基于 AI 快速生成题目并制作应用，经管理员审核后，可在线答题并基于多种评分算法或 AI 得到回答总结；管理员还可集中管理整站内容，并进行统计分析。
 
-#### 技术栈
+### 技术栈
 
 基于 Spring Boot + Redis + ChatGLM AI + RxJava + SSE + Caffeine + Vue3 + Arco Design + Pinia 的 AI 答题应用平台。
 
-#### 核心业务流程
+### 架构设计
+
+#### 核心业务流程图
+
+![image](https://github.com/user-attachments/assets/d9f5ab1d-af66-4830-ae31-9d407f4c749f)
+
 
 1. 用户注册 => 登录
 2. 用户创建应用 => 创建题目（包括题目选项得分）=> 创建评分规则（评分策略和评分结果）
@@ -16,10 +21,16 @@
 4. 用户查看、检索应用列表，进入应用详情页，在线答题并提交回答
 5. 经过评分模块计算后，用户可查看本次评分结果
 
-![image](https://github.com/user-attachments/assets/bde93034-a69c-4e62-a198-4f0b1db5d98c)
+#### 时序图
+
+![image](https://github.com/user-attachments/assets/db13bca3-bcfa-407e-b851-cb97c6d4cab8)
+
+#### 架构设计图
+
+![image](https://github.com/user-attachments/assets/decb81a0-793d-4dd3-b943-10dbe56d09bd)
 
 
-#### 项目亮点
+### 项目亮点
 - 库表设计：根据业务设计用户 / 应用 / 题目 / 评分结果 / 用户答题表。其中题目表采用 JSON 存储复杂的嵌套题目和选项，便于维护扩展，并通过给题目表添加 appId 索引提升检索性能；
 - 评分模块：基于**策略模式**实现了多种用户回答评分算法（如统计得分、AI 评分等），全局执行器会扫描策略类上的**自定义注解**并选取策略，相较于`if else`提高了系统的可扩展性；
 - 基于 ChatGLM AI 封装了通用 AI 服务，并通过配置类自动读取 key 配置初始化 AI 客户端 Bean，便于全局使用；
